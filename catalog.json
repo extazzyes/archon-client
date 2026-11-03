@@ -1,6 +1,12 @@
 {
   "mods": [
     {
+      "name": "Sky Islands Add On (Addon)",
+      "description": "",
+      "version": "",
+      "file": "Sky Islands Add-On (addon).mcaddon"
+    },
+    {
       "name": "Ai Players",
       "description": "",
       "version": "",
