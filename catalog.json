@@ -1,0 +1,10 @@
+{
+  "mods": [
+    {
+      "name": "ИИ игроки",
+      "description": "Добавляет в игру ИИ-игроков",
+      "version": "1.0",
+      "file": "ai-players.mcaddon"
+    }
+  ]
+}
