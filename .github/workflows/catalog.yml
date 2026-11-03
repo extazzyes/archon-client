@@ -1,0 +1,43 @@
+name: Update catalog
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build catalog.json
+        run: |
+          python3 - <<'PY'
+          import json, os
+          EXT = {".mcpack", ".mcaddon", ".mcworld", ".mctemplate"}
+          items = []
+          for folder in [".", "mods"]:
+              if not os.path.isdir(folder):
+                  continue
+              for f in sorted(os.listdir(folder)):
+                  stem, ext = os.path.splitext(f)
+                  if ext.lower() not in EXT:
+                      continue
+                  path = f if folder == "." else folder + "/" + f
+                  name = stem.replace("_", " ").replace("-", " ").title()
+                  desc = ""
+                  info = os.path.join(folder, stem + ".txt")
+                  if os.path.isfile(info):
+                      lines = open(info, encoding="utf-8").read().strip().splitlines()
+                      if lines:
+                          name = lines[0].strip()
+                          desc = " ".join(l.strip() for l in lines[1:]).strip()
+                  items.append({"name": name, "description": desc, "version": "", "file": path})
+          with open("catalog.json", "w", encoding="utf-8") as out:
+              json.dump({"mods": items}, out, ensure_ascii=False, indent=2)
+          PY
+      - name: Save catalog.json
+        run: |
+          git config user.name "archon-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add catalog.json
+          git diff --cached --quiet || (git commit -m "Update catalog" && git push)
